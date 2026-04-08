@@ -1,0 +1,57 @@
+{
+  "model_main": "meta-llama/Llama-3.3-70B-Instruct",
+  "model_small": "meta-llama/Meta-Llama-3.1-8B-Instruct",
+  "part_a": {
+    "PLAIN": {
+      "answer": "The Haymarket Vaults",
+      "tokens": 214,
+      "model": "meta-llama/Llama-3.3-70B-Instruct",
+      "correct": true,
+      "condition": "PLAIN"
+    },
+    "XML": {
+      "answer": "The Albanach",
+      "tokens": 286,
+      "model": "meta-llama/Llama-3.3-70B-Instruct",
+      "correct": true,
+      "condition": "XML"
+    },
+    "SANDWICH": {
+      "answer": "The Albanach",
+      "tokens": 359,
+      "model": "meta-llama/Llama-3.3-70B-Instruct",
+      "correct": true,
+      "condition": "SANDWICH"
+    }
+  },
+  "part_b": {
+    "PLAIN": {
+      "answer": "The Holyrood Arms",
+      "tokens": 275,
+      "model": "meta-llama/Llama-3.3-70B-Instruct",
+      "correct": false,
+      "condition": "PLAIN"
+    },
+    "XML": {
+      "answer": "The Haymarket Vaults",
+      "tokens": 365,
+      "model": "meta-llama/Llama-3.3-70B-Instruct",
+      "correct": true,
+      "condition": "XML"
+    },
+    "SANDWICH": {
+      "answer": "The Haymarket Vaults",
+      "tokens": 438,
+      "model": "meta-llama/Llama-3.3-70B-Instruct",
+      "correct": true,
+      "condition": "SANDWICH"
+    }
+  },
+  "part_c_was_run": false,
+  "part_c": {},
+  "summary": {
+    "part_a_all_correct": true,
+    "part_b_all_correct": false,
+    "structural_effect_seen_in": "part_b"
+  }
+}
