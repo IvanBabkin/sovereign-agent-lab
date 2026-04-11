@@ -42,10 +42,21 @@ Conversation 3 (out of scope):
 # ── Conversation 1: Happy path ─────────────────────────────────────────────
 
 CONVERSATION_1_TRACE = """
-PASTE YOUR rasa shell TERMINAL OUTPUT HERE
+Your input ->  calling to confirm a booking
+How many guests are you confirming for tonight's event?
+Your input ->  160 guests
+And how many of those guests will need vegan meals?
+Your input ->  about 50 need vegan
+What deposit amount in GBP are you proposing to secure the booking?
+Your input ->  £200 deposit
+Thank you — booking confirmed. 160 guests, 50 requiring vegan meals, £200 deposit accepted. I'll send written confirmation to the organiser shortly.
+Is there anything else I can help you with?
+Your input ->  no thank you
+I'm sorry, I'm not trained to help with that.
+Okay, I'll be around in case you need further help.
 """
 
-CONVERSATION_1_OUTCOME = "FILL_ME_IN"   # "confirmed" or "escalated"
+CONVERSATION_1_OUTCOME = "confirmed"   # "confirmed" or "escalated"
 
 # ── Conversation 2: Deposit too high ───────────────────────────────────────
 
