@@ -81,18 +81,41 @@ CONVERSATION_2_REASON  = "a deposit of £1000 exceeds the organiser's authorised
 # ── Conversation 3: Out of scope ───────────────────────────────────────────
 
 CONVERSATION_3_TRACE = """
-PASTE YOUR rasa shell TERMINAL OUTPUT HERE
+Your input ->  calling to confirm a booking
+How many guests are you confirming for tonight's event?
+Your input ->  160 guests
+And how many of those guests will need vegan meals?
+Your input ->  can you arrange parking for the speakers?
+I'm sorry, I'm not trained to help with that.
+I can only help with confirming tonight's venue booking. For anything else, please contact the event organiser directly.
+Would you like to continue with confirm booking?
+Your input ->  yes
+What deposit amount in GBP are you proposing to secure the booking?
+Your input ->  £200 deposit
+I can only help with confirming tonight's venue booking. For anything else, please contact the event organiser directly.
+Would you like to continue with confirm booking?
 """
 
 # Describe what CALM did after the out-of-scope message. Min 20 words.
 CONVERSATION_3_WHAT_HAPPENED = """
-FILL ME IN
+CALM suspended the confirm_booking flow, triggered handle_out_of_scope, and offered to resume.
+When the user said 'yes', CALM resumed and the flow continued as expected — however, it did not come back
+to verify the number of vegan guests. The vegan_count slot was silently skipped, jumping straight to the
+deposit question. This suggests the LLM treated 'yes' as filling the vegan_count slot rather than
+as a resumption confirmation, leaving that data uncollected.
 """
 
 # Compare Rasa CALM's handling of the out-of-scope request to what
 # LangGraph did in Exercise 2 Scenario 3. Min 40 words.
 OUT_OF_SCOPE_COMPARISON = """
-FILL ME IN
+Rasa CALM handled the deflection structurally: it triggered a dedicated handle_out_of_scope flow
+and explicitly offered to resume the paused confirm_booking flow — behaviour that is hardwired in flows.yml
+and identical every time, regardless of what the user said.
+LangGraph responded to off-topic input via the LLM at runtime, which meant the reply could be more
+contextually natural but was less predictable. CALM's approach is auditable and consistent, but the
+conversation above shows a real cost: the LLM misinterpreted 'yes' as a vegan_count value, skipped a slot,
+and then misfired the out-of-scope handler a second time on a perfectly valid deposit message.
+LangGraph could improvise past such glitches; CALM's deterministic flows can compound them.
 """
 
 # ── Task B: Cutoff guard ───────────────────────────────────────────────────
