@@ -61,11 +61,22 @@ CONVERSATION_1_OUTCOME = "confirmed"   # "confirmed" or "escalated"
 # ── Conversation 2: Deposit too high ───────────────────────────────────────
 
 CONVERSATION_2_TRACE = """
-PASTE YOUR rasa shell TERMINAL OUTPUT HERE
+Your input ->  calling to confirm a booking
+How many guests are you confirming for tonight's event?
+Your input ->  160 guests
+And how many of those guests will need vegan meals?
+Your input ->  about 50 need vegan
+What deposit amount in GBP are you proposing to secure the booking?
+Your input ->  £1,000 deposit
+I need to check one thing with the organiser before I can confirm. The issue is: a deposit of £1000 exceeds the organiser's authorised limit of £300. Can I call you back within 15 minutes?
+Is there anything else I can help you with?
+Your input ->  i see, sure call me back in 15
+I'm sorry, I'm not trained to help with that.
+Okay, I'll be around in case you need further help.
 """
 
-CONVERSATION_2_OUTCOME = "FILL_ME_IN"   # "confirmed" or "escalated"
-CONVERSATION_2_REASON  = "FILL_ME_IN"   # the reason the agent gave for escalating
+CONVERSATION_2_OUTCOME = "escalated"   # "confirmed" or "escalated"
+CONVERSATION_2_REASON  = "a deposit of £1000 exceeds the organiser's authorised limit of £300"   # the reason the agent gave for escalating
 
 # ── Conversation 3: Out of scope ───────────────────────────────────────────
 
