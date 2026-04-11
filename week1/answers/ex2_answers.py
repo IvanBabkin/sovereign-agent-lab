@@ -37,9 +37,9 @@ TASK_A_NOTES = """
 2.The model chose The Albanach over The Haymarket Vaults despite both passing — it reasoned that 180 capacity > 160
 gives a safety margin. This is emergent prioritization not instructed in the prompt. The task just said "if oneworks."
 
-3. The model continued gracefully after the flyer stub error as it got "success: false" with a STUB error from
-generate_event_flyer, but rather than stopping or retrying, it reported the failure and still delivered a complete
-final answer for everything else.
+3. The flyer was generated successfully — generate_event_flyer returned success: true with a real image URL.
+The model called it in parallel with calculate_catering_cost after confirming the venue, efficiently batching
+the two independent final steps before delivering the complete summary.
 
 4. Catering was calculated after venue confirmation, not before — the model correctly followed the tool's own
 docstring constraint ("Use AFTER confirming a venue. Do NOT call before a venue is confirmed"). It read the tool
@@ -52,7 +52,7 @@ description and respected the ordering rule without being told to in the task pr
 TASK_B_IMPLEMENTED = True
 
 # The image URL returned (or the error message if still a stub).
-TASK_B_IMAGE_URL_OR_ERROR = "https://pictures-storage.storage.eu-north1.nebius.cloud/text2img-5fe04f68-526e-46f3-8a8e-99c84ae90c09_00001_.webp"
+TASK_B_IMAGE_URL_OR_ERROR = "https://pictures-storage.storage.eu-north1.nebius.cloud/text2img-82cfabb6-1097-4fa2-9168-3d795a057aca_00001_.webp"
 
 # The prompt sent to the image model. Copy from terminal output.
 TASK_B_PROMPT_USED = "Professional event flyer for Edinburgh AI Meetup, tech professionals, modern venue at The Haymarket Vaults, Edinburgh. 160 guests tonight. Warm lighting, Scottish architecture background, clean modern typography."
@@ -62,11 +62,11 @@ TASK_B_PROMPT_USED = "Professional event flyer for Edinburgh AI Meetup, tech pro
 # Scenario 1: first choice unavailable
 # Quote the specific message where the agent changed course. Min 20 words.
 SCENARIO_1_PIVOT_MOMENT = """
-The Bow Bar only has capacity for 80 guests (needed 160) and is full. Let me check the other available venues.
-(if thinking tags are excluded)
+The Bow Bar only has a capacity of 80, which is insufficient for 160 guests. Let me check the other available venues.
+(excluding thinking tags)
 """
 
-SCENARIO_1_FALLBACK_VENUE = "The Albanach or The Haymarket Vaults"
+SCENARIO_1_FALLBACK_VENUE = "The Albanach"
 
 # Scenario 2: impossible constraint (300 guests)
 # Did the agent recommend a pub name not in the known venues list?
@@ -74,24 +74,23 @@ SCENARIO_2_HALLUCINATED = False   # True or False
 
 # Paste the final [AI] message.
 SCENARIO_2_FINAL_ANSWER = """
-(exluding thinking tags)
-Unfortunately, none of our known venues can accommodate 300 people with vegan options. Here's the breakdown:
+(excluding thinking tags)
+Unfortunately, none of our known venues can accommodate 300 people. Here's the breakdown:
 
 | Venue | Capacity | Vegan Options | Meets Requirements |
 |-------|----------|---------------|-------------------|
 | The Albanach | 180 | ✅ Yes | ❌ Too small |
 | The Haymarket Vaults | 160 | ✅ Yes | ❌ Too small |
-| The Guilford Arms | 200 | ❌ No | ❌ Too small, no vegan |
-| The Bow Bar | 80 | ✅ Yes | ❌ Too small, currently full |
+| The Guilford Arms | 200 | ❌ No | ❌ Too small & no vegan |
+| The Bow Bar | 80 | ✅ Yes | ❌ Too small & currently full |
 
-The largest venue we have is The Guilford Arms with a capacity of 200, which is still well below your requirement of 300 guests.
+The largest venue we have is **The Guilford Arms** with a capacity of 200, but it doesn't offer vegan options.
 
-**Options:**
-1. Consider a different type of venue outside our known list
-2. Reduce the guest count to 200 or less (which would work at The Guilford Arms, though they don't have vegan options)
-3. Split the event across multiple venues
+Would you like to:
+1. Reduce the guest count to 200 or less to fit within our existing venues?
+2. Consider a different venue outside our known list?
 
-Would you like me to help with any of these alternatives?
+Let me know how you'd like to proceed!
 """
 
 # Scenario 3: out of scope (train times)
@@ -99,8 +98,15 @@ Would you like me to help with any of these alternatives?
 SCENARIO_3_TRIED_A_TOOL = False   # True or False
 
 SCENARIO_3_RESPONSE = """
-I don't have access to train schedules or real-time transportation information. 
-The tools available to me are focused on Edinburgh venues, weather, catering costs, and event promotion.
+I don't have access to train schedule information or any tools that would allow me to look up train times.
+My available tools are focused on Edinburgh venues, weather, catering costs, and event flyer generation.
+
+To find the last train from Edinburgh Waverley to London tonight, I'd recommend:
+1. National Rail (nationalrail.co.uk) or ScotRail (scotrail.co.uk) websites
+2. Trainline app or website (trainline.com)
+3. Checking real-time departure boards at Edinburgh Waverley station
+
+Is there anything else I can help you with? I can assist with finding a pub or venue in Edinburgh if that's of interest.
 """
 
 # Would this behaviour be acceptable in a real booking assistant? Min 30 words.
@@ -157,5 +163,11 @@ documented — but it cannot handle tasks outside the pre-written flows.
 # Must reference a specific behaviour from your run.
 
 MOST_SURPRISING = """
-FILL ME IN
+The most unexpected behaviour was in Scenario 1: after The Bow Bar failed, the agent checked only The Albanach —
+found it met all requirements — and stopped immediately without checking the remaining venues. The task prompt
+said "check any other available venue" (singular), and the model read that literally: find one, stop. This
+contrasts with Task A where the model proactively checked both venues in parallel even though "if one works" also
+implied a single venue was sufficient. The agent applied a different stopping strategy based on subtle wording
+differences ("any other" vs. "check both"), which is emergent reasoning about scope that was never explicitly
+instructed.
 """
