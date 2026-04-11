@@ -120,14 +120,17 @@ LangGraph could improvise past such glitches; CALM's deterministic flows can com
 
 # ── Task B: Cutoff guard ───────────────────────────────────────────────────
 
-TASK_B_DONE = None   # True or False
+TASK_B_DONE = True   # True or False
 
 # List every file you changed.
-TASK_B_FILES_CHANGED = []
+TASK_B_FILES_CHANGED = ["exercise3_rasa/actions/actions.py"]
 
 # How did you test that it works? Min 20 words.
 TASK_B_HOW_YOU_TESTED = """
-FILL ME IN
+Temporarily changed the cutoff condition to 'if True:' to force the guard to always fire.
+Ran a full booking conversation (160 guests, 50 vegan, £200 deposit) and confirmed the agent
+escalated with the message: 'it is past 16:45 — insufficient time to process the confirmation
+before the 5 PM deadline.' Then reverted the condition back to the real time check.
 """
 
 # ── CALM vs Old Rasa ───────────────────────────────────────────────────────
