@@ -116,12 +116,39 @@ This is exactly what a trustworthy assistant should do when asked something outs
 
 # Paste the Mermaid output from `python exercise2_langgraph.py task_d` here.
 TASK_D_MERMAID_OUTPUT = """
-PASTE MERMAID OUTPUT HERE
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	agent(agent)
+	tools(tools)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> agent;
+	agent -.-> __end__;
+	agent -.-> tools;
+	tools --> agent;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc
 """
 
 # Compare the LangGraph graph to exercise3_rasa/data/rules.yml. Min 30 words.
 TASK_D_COMPARISON = """
-FILL ME IN
+LangGraph (research agent): The graph has just three nodes — start, agent, tools, end — forming a single loop.
+All routing is implicit: the model decides at every step whether to call a tool or terminate. The graph is a container, 
+and the complexity lives entirely inside the model's reasoning.
+
+Rasa CALM (flows.yml): Every possible task is an explicitly named flow (confirm_booking, handle_out_of_scope),
+with ordered steps written in YAML — collect this slot, run this action. The LLM only decides WHICH flow to
+trigger; after that, Rasa executes the steps deterministically. Every path is readable and auditable without
+running the model.
+
+Trade-off: LangGraph is flexible and can handle novel paths the designer didn't anticipate, but you cannot
+predict or audit every execution path. Rasa CALM is predictable and transparent — every possible behaviour is
+documented — but it cannot handle tasks outside the pre-written flows.
 """
 
 # ── Reflection ─────────────────────────────────────────────────────────────
