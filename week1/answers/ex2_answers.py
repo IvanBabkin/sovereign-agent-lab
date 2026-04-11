@@ -62,29 +62,54 @@ TASK_B_PROMPT_USED = "Professional event flyer for Edinburgh AI Meetup, tech pro
 # Scenario 1: first choice unavailable
 # Quote the specific message where the agent changed course. Min 20 words.
 SCENARIO_1_PIVOT_MOMENT = """
-FILL ME IN
+The Bow Bar only has capacity for 80 guests (needed 160) and is full. Let me check the other available venues.
+(if thinking tags are excluded)
 """
 
-SCENARIO_1_FALLBACK_VENUE = "FILL_ME_IN"
+SCENARIO_1_FALLBACK_VENUE = "The Albanach or The Haymarket Vaults"
 
 # Scenario 2: impossible constraint (300 guests)
 # Did the agent recommend a pub name not in the known venues list?
-SCENARIO_2_HALLUCINATED = None   # True or False
+SCENARIO_2_HALLUCINATED = False   # True or False
 
 # Paste the final [AI] message.
 SCENARIO_2_FINAL_ANSWER = """
-FILL ME IN
+(exluding thinking tags)
+Unfortunately, none of our known venues can accommodate 300 people with vegan options. Here's the breakdown:
+
+| Venue | Capacity | Vegan Options | Meets Requirements |
+|-------|----------|---------------|-------------------|
+| The Albanach | 180 | ✅ Yes | ❌ Too small |
+| The Haymarket Vaults | 160 | ✅ Yes | ❌ Too small |
+| The Guilford Arms | 200 | ❌ No | ❌ Too small, no vegan |
+| The Bow Bar | 80 | ✅ Yes | ❌ Too small, currently full |
+
+The largest venue we have is The Guilford Arms with a capacity of 200, which is still well below your requirement of 300 guests.
+
+**Options:**
+1. Consider a different type of venue outside our known list
+2. Reduce the guest count to 200 or less (which would work at The Guilford Arms, though they don't have vegan options)
+3. Split the event across multiple venues
+
+Would you like me to help with any of these alternatives?
 """
 
 # Scenario 3: out of scope (train times)
 # Did the agent try to call a tool?
-SCENARIO_3_TRIED_A_TOOL = None   # True or False
+SCENARIO_3_TRIED_A_TOOL = False   # True or False
 
-SCENARIO_3_RESPONSE = "FILL_ME_IN"
+SCENARIO_3_RESPONSE = """
+I don't have access to train schedules or real-time transportation information. 
+The tools available to me are focused on Edinburgh venues, weather, catering costs, and event promotion.
+"""
 
 # Would this behaviour be acceptable in a real booking assistant? Min 30 words.
 SCENARIO_3_ACCEPTABLE = """
-FILL ME IN
+Yes, this behaviour is acceptable and desirable. 
+The agent correctly recognised it lacked the relevant tool, acknowledged its scope boundary honestly, 
+directed the user to appropriate external resources (National Rail, Trainline), and invited them to return with an in-scope question
+rather than hallucinating a train time or trying to force an irrelevant tool call.
+This is exactly what a trustworthy assistant should do when asked something outside its domain.
 """
 
 # ── Task D ─────────────────────────────────────────────────────────────────
