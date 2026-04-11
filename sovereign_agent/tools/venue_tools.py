@@ -34,7 +34,9 @@ about failures depends entirely on what these functions return.
 """
 
 import json
+import os
 import requests
+from openai import OpenAI
 from langchain_core.tools import tool
 
 # ─── Venue database ───────────────────────────────────────────────────────────
@@ -215,11 +217,29 @@ def generate_event_flyer(venue_name: str, guest_count: int, event_theme: str) ->
 
     prompt = (
         f"Professional event flyer for {event_theme} at {venue_name}, "
-        f"Edinburgh. {guest_count} guests."
+        f"Edinburgh. {guest_count} guests tonight. Warm lighting, "
+        f"Scottish architecture background, clean modern typography."
     )
-    return json.dumps({
-        "success": False,
-        "error": "STUB — see TODO in sovereign_agent/tools/venue_tools.py",
-        "prompt_used": prompt,
-        "image_url": "",
-    })
+    try:
+        client = OpenAI(
+            base_url="https://api.tokenfactory.nebius.com/v1/",
+            api_key=os.getenv("NEBIUS_KEY"),
+        )
+        response = client.images.generate(
+            model="black-forest-labs/flux-schnell",
+            prompt=prompt,
+            n=1,
+        )
+        url = response.data[0].url
+        return json.dumps({
+            "success": True,
+            "prompt_used": prompt,
+            "image_url": url,
+        })
+    except Exception as e:
+        return json.dumps({
+            "success": False,
+            "error": str(e),
+            "prompt_used": prompt,
+            "image_url": "",
+        })
