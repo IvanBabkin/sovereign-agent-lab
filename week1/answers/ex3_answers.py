@@ -149,12 +149,17 @@ before the 5 PM deadline.' Then reverted the condition back to the real time che
 # Min 30 words.
 
 CALM_VS_OLD_RASA = """
-FILL ME IN
+CALM eliminates the FormValidationAction and nlu.yml entirely. The LLM now handles what Python
+previously did: parsing natural language slot values like 'about 160 people' into 160.0, and
+deciding which flow to trigger from a description rather than matched intents.
 
-Think about:
-- What does the LLM handle now that Python handled before?
-- What does Python STILL handle, and why (hint: business rules)?
-- Is there anything you trusted more in the old approach?
+Python still enforces the business rules in ActionValidateBooking class — deposit limits, capacity
+ceilings, vegan ratios — because these constraints must be deterministic. An LLM could be
+reasoned around; Python cannot.
+
+The old approach was arguably more trustworthy for slot extraction: regex either matched or it
+didn't. With from_llm, the extraction is probabilistic — as conversation 3 showed, 'yes' was
+silently treated as a vegan count, skipping the slot entirely. More flexibility, less predictability.
 """
 
 # ── The setup cost ─────────────────────────────────────────────────────────
@@ -168,10 +173,14 @@ Think about:
 # Min 40 words.
 
 SETUP_COST_VALUE = """
-FILL ME IN
+The setup cost bought auditability and control. Every path the CALM agent can take is explicitly
+written in flows.yml — a non-engineer can read it and know exactly what the agent will do.
+The agent cannot improvise a response it wasn't trained on, and it cannot call a tool not defined
+in flows.yml. For this confirmation use case, that is a feature: Rod needs to know the agent will
+never go off-script on a financially binding decision.
 
-Be specific. What can the Rasa CALM agent NOT do that LangGraph could?
-Is that a feature or a limitation for the confirmation use case?
-Think about: can the CALM agent improvise a response it wasn't trained on?
-Can it call a tool that wasn't defined in flows.yml?
+LangGraph could improvise, tool-call dynamically, and handle novel situations — but you cannot
+read a mermaid graph and predict every possible response. For a research agent that is an asset;
+for a venue booking agent handling deposits, it is a liability. The CALM setup cost buys a
+compliance-ready, auditable agent at the price of zero flexibility outside the defined flows.
 """
