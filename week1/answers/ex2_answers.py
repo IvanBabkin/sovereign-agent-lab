@@ -29,7 +29,22 @@ TASK_A_CATERING_COST_GBP = 5600.0
 # Did the weather tool return outdoor_ok = True or False?
 TASK_A_OUTDOOR_OK = True
 
-TASK_A_NOTES = "Model batched the first three tool calls in parallel (both venue checks + weather) before reasoning on results."
+TASK_A_NOTES = """
+1. Model batched the first three tool calls in parallel (both venue checks + weather) before reasoning on results.
+(three tool_call entries appear back-to-back before the first AI reasoning message and the model mentioned in the <think> block:
+"Let me start by checking both pubs and the weather in parallel since these are independent calls.")
+
+2.The model chose The Albanach over The Haymarket Vaults despite both passing — it reasoned that 180 capacity > 160
+gives a safety margin. This is emergent prioritization not instructed in the prompt. The task just said "if oneworks."
+
+3. The model continued gracefully after the flyer stub error as it got "success: false" with a STUB error from
+generate_event_flyer, but rather than stopping or retrying, it reported the failure and still delivered a complete
+final answer for everything else.
+
+4. Catering was calculated after venue confirmation, not before — the model correctly followed the tool's own
+docstring constraint ("Use AFTER confirming a venue. Do NOT call before a venue is confirmed"). It read the tool
+description and respected the ordering rule without being told to in the task prompt.
+"""
 
 # ── Task B ─────────────────────────────────────────────────────────────────
 
