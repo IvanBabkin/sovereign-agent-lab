@@ -165,7 +165,7 @@ def check_ex2() -> None:
             fn = getattr(mod, "generate_event_flyer", None)
             if fn:
                 raw_fn = fn.func if hasattr(fn, "func") else fn
-                raw    = raw_fn(pub_name="Test", guest_count=10, event_theme="test")
+                raw    = raw_fn(venue_name="Test", guest_count=10, event_theme="test")
                 parsed = json.loads(raw) if isinstance(raw, str) else raw
                 is_stub = "STUB" in str(parsed.get("error", ""))
                 record(
