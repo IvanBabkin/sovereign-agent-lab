@@ -37,9 +37,9 @@ TASK_A_NOTES = """
 2.The model chose The Albanach over The Haymarket Vaults despite both passing — it reasoned that 180 capacity > 160
 gives a safety margin. This is emergent prioritization not instructed in the prompt. The task just said "if oneworks."
 
-3. The flyer was generated successfully — generate_event_flyer returned success: true with a real image URL.
-The model called it in parallel with calculate_catering_cost after confirming the venue, efficiently batching
-the two independent final steps before delivering the complete summary.
+3. The model continued gracefully after the flyer stub error as it got "success: false" with a STUB error from
+generate_event_flyer, but rather than stopping or retrying, it reported the failure and still delivered a complete
+final answer for everything else.
 
 4. Catering was calculated after venue confirmation, not before — the model correctly followed the tool's own
 docstring constraint ("Use AFTER confirming a venue. Do NOT call before a venue is confirmed"). It read the tool
