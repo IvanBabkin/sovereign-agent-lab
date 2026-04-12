@@ -7,11 +7,11 @@ Fill this in after running exercise4_mcp_client.py.
 # ── Basic results ──────────────────────────────────────────────────────────
 
 # Tool names as shown in "Discovered N tools" output.
-TOOLS_DISCOVERED = []
+TOOLS_DISCOVERED = ["search_venues", "get_venue_details"]
 
-QUERY_1_VENUE_NAME    = "FILL_ME_IN"
-QUERY_1_VENUE_ADDRESS = "FILL_ME_IN"
-QUERY_2_FINAL_ANSWER  = "FILL_ME_IN"
+QUERY_1_VENUE_NAME    = "The Haymarket Vaults"
+QUERY_1_VENUE_ADDRESS = "1 Dalry Road, Edinburgh"
+QUERY_2_FINAL_ANSWER  = "No venue found — the largest available venue (The Guilford Arms, 200 capacity) is under 300, and no venue with both 300+ capacity and vegan options exists in the dataset."
 
 # ── The experiment ─────────────────────────────────────────────────────────
 # Required: modify venue_server.py, rerun, revert.
