@@ -16,11 +16,20 @@ QUERY_2_FINAL_ANSWER  = "No venue found — the largest available venue (The Gui
 # ── The experiment ─────────────────────────────────────────────────────────
 # Required: modify venue_server.py, rerun, revert.
 
-EX4_EXPERIMENT_DONE = None   # True or False
+EX4_EXPERIMENT_DONE = True
 
 # What changed, and which files did or didn't need updating? Min 30 words.
 EX4_EXPERIMENT_RESULT = """
-FILL ME IN
+Changing The Albanach's status to 'full' in mcp_venue_server.py caused it to
+disappear from all search results automatically. In Query 1, search_venues
+returned 1 match instead of 2; the agent still found the correct answer (The
+Haymarket Vaults) without any guidance. In Query 2, The Albanach was also
+absent when the agent probed lower capacity thresholds.
+
+No changes were needed to exercise4_mcp_client.py, the tool bridge code, or
+the tool schemas. Only mcp_venue_server.py was edited. The agent picked up the
+updated data at runtime because each MCP call spawns a fresh server process
+reading the current file — there is no caching or redeployment step.
 """
 
 # ── MCP vs hardcoded ───────────────────────────────────────────────────────

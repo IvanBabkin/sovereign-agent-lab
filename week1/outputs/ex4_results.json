@@ -26,7 +26,7 @@
         },
         {
           "role": "tool",
-          "content": "{\"matches\": [{\"name\": \"The Albanach\", \"capacity\": 180, \"vegan\": true, \"status\": \"available\", \"address\": \"2 Hunter Square, Edinburgh\"}, {\"name\": \"The Haymarket Vaults\", \"capacity\": 160, \"vegan\": true, \"status\": \"available\", \"address\": \"1 Dalry Road, Edinburgh\"}], \"count\": 2}"
+          "content": "{\"matches\": [{\"name\": \"The Haymarket Vaults\", \"capacity\": 160, \"vegan\": true, \"status\": \"available\", \"address\": \"1 Dalry Road, Edinburgh\"}], \"count\": 1}"
         },
         {
           "role": "tool_call",
@@ -37,7 +37,7 @@
         },
         {
           "role": "ai",
-          "content": "<think>I found 2 venues that match the criteria:\n1. The Albanach - capacity 180, vegan options, available\n2. The Haymarket Vaults - capacity 160, vegan options, available\n\nThe best match for 160 guests would be The Haymarket Vaults since it has exactly 160 capacity, which is the perfect match. The Albanach has 180 capacity which is more than needed. Let me get the full details of The Haymarket Vaults to provide the full address.\n</think>\n\n\n"
+          "content": "<think>I found one venue that matches the criteria: The Haymarket Vaults with a capacity of 160 and vegan options available. Since there's only one match, this is clearly the best (and only) option. Let me get the full details to provide the complete address.\n</think>\n\n\n"
         },
         {
           "role": "tool",
@@ -45,7 +45,7 @@
         },
         {
           "role": "ai",
-          "content": "<think>I have the full details. The Haymarket Vaults is the best match as it has exactly 160 capacity (perfect for the user's needs), has vegan options, and is available. The address is 1 Dalry Road, Edinburgh.\n</think>\n\nThe best match for your 160 guests with vegan options is **The Haymarket Vaults**.\n\n**Full Address:** 1 Dalry Road, Edinburgh\n\nThis venue has exactly 160 capacity, offers vegan options, and is currently available - perfect for your event!"
+          "content": "<think>I have the full details. The Haymarket Vaults is the perfect match - it has exactly 160 capacity, has vegan options, and is available. The full address is 1 Dalry Road, Edinburgh.\n</think>\n\nGreat news! I found the perfect venue for your event:\n\n**The Haymarket Vaults**\n- **Capacity:** 160 guests\n- **Vegan Options:** Yes\n- **Status:** Available\n- **Full Address:** 1 Dalry Road, Edinburgh\n\nThis venue exactly matches your requirements with a capacity of 160 guests and vegan menu options available. It's currently available and ready to host your event!"
         }
       ]
     },
@@ -102,7 +102,7 @@
         },
         {
           "role": "tool",
-          "content": "{\"matches\": [{\"name\": \"The Albanach\", \"capacity\": 180, \"vegan\": true, \"status\": \"available\", \"address\": \"2 Hunter Square, Edinburgh\"}, {\"name\": \"The Haymarket Vaults\", \"capacity\": 160, \"vegan\": true, \"status\": \"available\", \"address\": \"1 Dalry Road, Edinburgh\"}, {\"name\": \"The Guilford Arms\", \"capacity\": 200, \"vegan\": false, \"status\": \"available\", \"address\": \"1 West Register Street, Edinburgh\"}], \"count\": 3}"
+          "content": "{\"matches\": [{\"name\": \"The Haymarket Vaults\", \"capacity\": 160, \"vegan\": true, \"status\": \"available\", \"address\": \"1 Dalry Road, Edinburgh\"}, {\"name\": \"The Guilford Arms\", \"capacity\": 200, \"vegan\": false, \"status\": \"available\", \"address\": \"1 West Register Street, Edinburgh\"}], \"count\": 2}"
         },
         {
           "role": "tool_call",
@@ -114,7 +114,7 @@
         },
         {
           "role": "ai",
-          "content": "<think>Interesting - so there are venues available but none with capacity of 300. The highest capacity I found is 200 (The Guilford Arms). Let me check if there are any venues with higher capacity by trying a few more searches. Let me try with min_capacity 250.\n</think>\n\n\n"
+          "content": "<think>Interesting - so there are some venues but they don't meet the 300 person capacity. Let me try with a slightly lower capacity to see what's available. It seems like there may not be venues that can hold 300 people in the system. Let me try with 250 as the minimum capacity.\n</think>\n\n\n"
         },
         {
           "role": "tool",
@@ -130,31 +130,15 @@
         },
         {
           "role": "ai",
-          "content": "<think>No venues with 250+ capacity. Let me try with 200 as the minimum to see what I get.\n</think>\n\n\n"
+          "content": "<think>It seems like the highest capacity venues in the system are around 200. Let me try with 200 as the minimum to see all available venues.\n</think>\n\n\n"
         },
         {
           "role": "tool",
           "content": "{\"matches\": [{\"name\": \"The Guilford Arms\", \"capacity\": 200, \"vegan\": false, \"status\": \"available\", \"address\": \"1 West Register Street, Edinburgh\"}], \"count\": 1}"
         },
         {
-          "role": "tool_call",
-          "tool": "search_venues",
-          "args": {
-            "min_capacity": 200,
-            "requires_vegan": true
-          }
-        },
-        {
           "role": "ai",
-          "content": "<think>So the highest capacity venue available is The Guilford Arms with 200 capacity, but it doesn't have vegan options. \n\nLet me also check if there are any venues with vegan options that might have capacity close to 300 - maybe I should check venues with lower capacity but that have vegan options.\n</think>\n\n\n"
-        },
-        {
-          "role": "tool",
-          "content": "{\"matches\": [], \"count\": 0}"
-        },
-        {
-          "role": "ai",
-          "content": "<think>So there are no venues that meet both criteria (300 capacity AND vegan options). The highest capacity venue is The Guilford Arms with 200 capacity but it doesn't have vegan options. \n\nI should let the user know about this and provide the alternatives.\n</think>\n\nUnfortunately, I couldn't find a venue in Edinburgh that meets both requirements (capacity of 300 people **and** vegan options).\n\nHere's what I found:\n\n- **The Guilford Arms** - Capacity: 200 people, Vegan: \u274c No, Address: 1 West Register Street, Edinburgh\n- **The Albanach** - Capacity: 180 people, Vegan: \u2705 Yes, Address: 2 Hunter Square, Edinburgh\n- **The Haymarket Vaults** - Capacity: 160 people, Vegan: \u2705 Yes, Address: 1 Dalry Road, Edinburgh\n\nThe highest capacity venue available is **The Guilford Arms** with 200 guests, but it doesn't offer vegan options. The venues with vegan options (The Albanach and The Haymarket Vaults) have capacities under 200.\n\nWould you like me to:\n1. Provide more details on any of these venues?\n2. Search for venues with a different minimum capacity?"
+          "content": "<think>So it appears that the highest capacity venue in the system is The Guilford Arms with 200 people, and it doesn't have vegan options. The Haymarket Vaults has vegan options but only 160 capacity.\n\nUnfortunately, based on the available data, there doesn't seem to be a venue in Edinburgh that can accommodate 300 people with vegan options. I should inform the user about this.\n</think>\n\nUnfortunately, I wasn't able to find a venue that meets both requirements (300 people capacity AND vegan options).\n\nHere's what I found:\n- **The Haymarket Vaults** - 160 capacity, vegan available, but below your 300 person requirement\n- **The Guilford Arms** - 200 capacity, but does NOT have vegan options\n\nThe highest capacity venue in the system is The Guilford Arms with 200 people, but it doesn't offer vegan menu options.\n\nYou may need to:\n1. Consider venues with slightly lower capacity\n2. Contact venues directly to inquire about larger spaces or external catering options for vegan food\n\nWould you like me to provide details on either of the venues I found?"
         }
       ]
     }
