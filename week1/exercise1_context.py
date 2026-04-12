@@ -88,9 +88,15 @@ The Grain Store: capacity=170, vegan=no, status=available
 The Ensign Ewart: capacity=120, vegan=yes, status=available
 """
 
+# Changed question to try and break the model as per the lecture content. 
+# Tried to add "I visited..." to try to make the model enter conversational mode.
 QUESTION = (
-    "Which single venue is available tonight, fits at least 160 guests, "
-    "AND has vegan options? Reply with only the venue name, nothing else."
+    """
+    Which single venue is available tonight, fits at least 160 guests, 
+    AND has vegan options? I visted Bow Bar which holds 80 people, 
+    and while they did have vegan options, the status is currently full. 
+    Reply with only the singlevenue name, nothing else.
+    """
 )
 
 ACCEPTABLE = {"haymarket", "albanach"}
@@ -110,16 +116,17 @@ ACCEPTABLE = {"haymarket", "albanach"}
 # Attention "blurs" adjacent similar items. The closer the distractor to the
 # correct answer, the harder it is to discriminate between them.
 
+# Changed venues to include vegetarian option to try and break the model as per the lecture content.
 VENUES_WITH_DISTRACTORS = """\
-The Albanach: capacity=180, vegan=yes, status=available
-The Bow Bar: capacity=80, vegan=yes, status=full
-The Guilford Arms: capacity=200, vegan=no, status=available
-The Hanging Bat: capacity=70, vegan=yes, status=available
-The New Town Vault: capacity=162, vegan=no, status=available
-The Holyrood Arms: capacity=160, vegan=yes, status=full
-The Haymarket Vaults: capacity=160, vegan=yes, status=available
-The Grain Store: capacity=170, vegan=no, status=available
-The Ensign Ewart: capacity=120, vegan=yes, status=available
+The Albanach: capacity=180, vegetarian=yes, vegan=yes, status=available
+The Bow Bar: capacity=80, vegetarian=no, vegan=yes, status=full
+The Guilford Arms: capacity=200, vegetarian=no, vegan=no, status=available
+The Hanging Bat: capacity=70, vegetarian=no, vegan=yes, status=available
+The New Town Vault: capacity=162, vegetarian=yes, vegan=no, status=available
+The Holyrood Arms: capacity=160, vegetarian=yes, vegan=yes, status=full
+The Haymarket Vaults: capacity=160, vegetarian=no, vegan=yes, status=available
+The Grain Store: capacity=170, vegetarian=no, vegan=no, status=available
+The Ensign Ewart: capacity=120, vegetarian=yes, vegan=yes, status=available
 """
 
 # ─── Presentation format builders ─────────────────────────────────────────────

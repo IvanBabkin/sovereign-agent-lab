@@ -69,7 +69,8 @@ load_dotenv()
 llm = ChatOpenAI(
     base_url="https://api.tokenfactory.nebius.com/v1/",
     api_key=os.getenv("NEBIUS_KEY"),
-    model="meta-llama/Llama-3.3-70B-Instruct",
+    # changed model to MiniMax-M2.5 to support the tool calls in Task A.
+    model="MiniMaxAI/MiniMax-M2.5",
     temperature=0,
 )
 
@@ -122,7 +123,23 @@ def run_research_agent(task: str, max_turns: int = 8) -> dict:
         role    = getattr(m, "type", "unknown")
         content = m.content
 
-        # Tool-call messages have structured list content
+        # Below was added to support the MiniMax-M2.5 model as Task A was failing with llama 3.3.
+        # Primary: LangChain standard tool calls (OpenAI-compatible function calling)
+        # Most models populate message.tool_calls when using the function-call protocol.
+        if hasattr(m, "tool_calls") and m.tool_calls:
+            for tc in m.tool_calls:
+                entry = {
+                    "tool": tc["name"],
+                    "args": tc.get("args", {}),
+                }
+                tool_calls_made.append(entry)
+                full_trace.append({"role": "tool_call", **entry})
+            # Some models include reasoning text alongside tool calls
+            if content and isinstance(content, str):
+                full_trace.append({"role": role, "content": content})
+            continue
+
+        # Fallback: Anthropic-style structured list content (tool_use blocks)
         if isinstance(content, list):
             for block in content:
                 if isinstance(block, dict) and block.get("type") == "tool_use":

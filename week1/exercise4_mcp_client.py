@@ -37,6 +37,7 @@ import json
 import os
 import sys
 from pathlib import Path
+from typing import Any
 
 from dotenv import load_dotenv
 from langchain_core.tools import StructuredTool
@@ -44,6 +45,7 @@ from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
+from pydantic import create_model
 
 load_dotenv()
 
@@ -53,6 +55,25 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 SERVER_SCRIPT = str(Path(__file__).parent.parent / "sovereign_agent" / "tools" / "mcp_venue_server.py")
 OUTPUTS_DIR   = Path(__file__).parent / "outputs"
 OUTPUTS_DIR.mkdir(exist_ok=True)
+
+
+# ─── Schema bridge ────────────────────────────────────────────────────────────
+#
+# Build a Pydantic model from the MCP tool's own inputSchema (JSON Schema).
+# This is passed as args_schema to StructuredTool so the LLM receives the
+# correct parameter names/types instead of the broken {"kwargs": object} schema
+# that StructuredTool infers from the call(**kwargs) signature.
+
+def _build_args_schema(tool_name: str, input_schema: dict):
+    type_map = {"integer": int, "number": float, "string": str,
+                "boolean": bool, "object": dict, "array": list}
+    properties = input_schema.get("properties", {})
+    required   = input_schema.get("required", [])
+    fields = {}
+    for field_name, field_schema in properties.items():
+        field_type = type_map.get(field_schema.get("type", "string"), Any)
+        fields[field_name] = (field_type, ...) if field_name in required else (field_type, None)
+    return create_model(f"{tool_name}Arguments", **fields)
 
 
 # ─── MCP → LangChain bridge ───────────────────────────────────────────────────
@@ -97,6 +118,7 @@ async def discover_tools(server_script: str) -> list:
                     func=_make_mcp_caller(t.name, server_script),
                     name=t.name,
                     description=t.description or f"MCP tool: {t.name}",
+                    args_schema=_build_args_schema(t.name, t.inputSchema or {}),
                 )
                 tools.append(lc_tool)
             return tools, [t.name for t in raw.tools]
@@ -109,6 +131,17 @@ def extract_trace(result: dict) -> list:
     for m in result["messages"]:
         role    = getattr(m, "type", "unknown")
         content = m.content
+
+        # Primary: OpenAI-compatible tool_calls (MiniMax, GPT-4, etc.)
+        if hasattr(m, "tool_calls") and m.tool_calls:
+            for tc in m.tool_calls:
+                trace.append({"role": "tool_call", "tool": tc["name"],
+                               "args": tc.get("args", {})})
+            if content and isinstance(content, str):
+                trace.append({"role": role, "content": content})
+            continue
+
+        # Fallback: Anthropic-style list content with tool_use blocks
         if isinstance(content, list):
             for block in content:
                 if isinstance(block, dict) and block.get("type") == "tool_use":
@@ -123,7 +156,7 @@ def print_trace(trace: list) -> None:
     for entry in trace:
         if entry["role"] == "tool_call":
             args_str = json.dumps(entry.get("args", {}))[:80]
-            print(f"  [TOOL_CALL] → {entry['tool']}({args_str})")
+            print(f"  [TOOL_CALL] -> {entry['tool']}({args_str})")
         elif entry.get("content"):
             content = entry["content"]
             if len(content) > 400:
@@ -135,7 +168,9 @@ async def main() -> None:
     llm = ChatOpenAI(
         base_url="https://api.tokenfactory.nebius.com/v1/",
         api_key=os.getenv("NEBIUS_KEY"),
-        model="meta-llama/Llama-3.3-70B-Instruct",
+        # Switched from Llama-3.3-70B to MiniMax-M2.5: Llama outputs tool calls
+        # as plain text (breaking the ReAct loop); MiniMax uses standard tool_calls.
+        model="MiniMaxAI/MiniMax-M2.5",
         temperature=0,
     )
 
@@ -153,7 +188,7 @@ async def main() -> None:
     print(f"\n{'=' * 65}")
     print("  Query 1 — Search + Detail Fetch")
     print(f"{'=' * 65}\n")
-    r1     = agent.invoke({"messages": [("user", q1)]})
+    r1     = agent.invoke({"messages": [("user", q1)]}, config={"recursion_limit": 16})
     trace1 = extract_trace(r1)
     print_trace(trace1)
     output["queries"]["query_1"] = {"query": q1, "trace": trace1}
@@ -163,13 +198,13 @@ async def main() -> None:
     print(f"\n{'=' * 65}")
     print("  Query 2 — Impossible Constraint")
     print(f"{'=' * 65}\n")
-    r2     = agent.invoke({"messages": [("user", q2)]})
+    r2     = agent.invoke({"messages": [("user", q2)]}, config={"recursion_limit": 16})
     trace2 = extract_trace(r2)
     print_trace(trace2)
     output["queries"]["query_2"] = {"query": q2, "trace": trace2}
 
     # ── Required experiment reminder ──────────────────────────────────────────
-    print("\n" + "─" * 65)
+    print("\n" + "-" * 65)
     print("REQUIRED EXPERIMENT (before filling in ex4_answers.py):")
     print()
     print("  1. Open sovereign_agent/tools/mcp_venue_server.py")
@@ -178,11 +213,11 @@ async def main() -> None:
     print("  4. Compare the output to what you just saw")
     print("  5. Revert the change")
     print()
-    print("  Record what changed (and what didn't) in ex4_answers.py → EX4_EXPERIMENT_RESULT")
+    print("  Record what changed (and what didn't) in ex4_answers.py -> EX4_EXPERIMENT_RESULT")
 
     out_path = OUTPUTS_DIR / "ex4_results.json"
     out_path.write_text(json.dumps(output, indent=2, default=str))
-    print(f"\n✅  Results saved to {out_path}")
+    print(f"\nDone. Results saved to {out_path}")
     print("    Complete the experiment above, then fill in week1/answers/ex4_answers.py")
 
 
