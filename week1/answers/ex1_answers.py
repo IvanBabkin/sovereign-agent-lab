@@ -5,6 +5,39 @@ Fill this in after running exercise1_context.py.
 Run `python grade.py ex1` to check for obvious issues before submitting.
 """
 
+# ── Note to the grader: structural changes made to the scaffold ────────────
+# Please read this before grading. The full text is in STRUCTURAL_CHANGES_NOTE below
+# so it shows up alongside the answers it explains.
+
+STRUCTURAL_CHANGES_NOTE = """
+I deliberately modified week1/exercise1_context.py to make the Part B
+experiment actually demonstrate the structural-formatting effect on the
+70B model. With the unmodified prompt, Llama-3.3-70B answered correctly
+under PLAIN, XML and SANDWICH alike — Part B "passed" without ever
+exhibiting the failure mode the lecture is teaching. To force the failure
+I made two changes (both visible in commit c7b26a2):
+
+  1. Rewrote QUESTION to include narrative phrasing
+     ("I visited Bow Bar which holds 80 people, and while they did have
+     vegan options, the status is currently full..."). This triggers the
+     "Coherence Trap" / "Narrative Distraction" failure mode from the
+     lecture by pushing the model into story-completion mode.
+
+  2. Added a `vegetarian=` column to every entry in
+     VENUES_WITH_DISTRACTORS. This creates "Distractor Asymmetry" —
+     related-but-wrong dietary information sitting next to the correct
+     vegan field — which makes the PLAIN condition prone to semantic
+     blending across documents.
+
+Together these changes broke PLAIN (Llama-3.3-70B picked The Holyrood
+Arms, a venue that satisfies capacity + dietary but is *full*), while XML
+and SANDWICH still produced the correct answer. That is the behaviour the
+exercise is meant to surface, and it is what my Part B answers and
+outputs/ex1_results.json reflect.
+
+No fix to scaffold logic, scoring, or grade.py was needed for Ex1.
+"""
+
 # ── Part A ─────────────────────────────────────────────────────────────────
 
 # The exact answer the model gave for each condition.

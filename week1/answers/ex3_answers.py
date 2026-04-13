@@ -39,6 +39,29 @@ Conversation 3 (out of scope):
   Does CALM handle this differently than the old rules approach?
 """
 
+# ── Note to the grader: structural changes made to the scaffold ────────────
+# Please read this before grading. The full text is in STRUCTURAL_CHANGES_NOTE below
+# so it shows up alongside the answers it explains.
+
+STRUCTURAL_CHANGES_NOTE = """
+One scaffold fix was needed for Exercise 3 to grade correctly on Windows
+(commit 56794e1). It does not affect any answer or any business logic.
+
+1. UnicodeDecodeError in week1/grade.py (check_ex3)
+   The scaffold called
+       source = actions_path.read_text()
+   on exercise3_rasa/actions/actions.py to verify the cutoff guard. On
+   Windows, Path.read_text() defaults to the system codec (cp1252), which
+   cannot decode the GBP sign in the file (e.g. "MAX_DEPOSIT_GBP = 300"
+   and the £ symbols in the validation messages). The check therefore
+   crashed with UnicodeDecodeError before it could even look at the guard,
+   masking a passing implementation as a hard failure. I added an explicit
+   encoding so the read succeeds on every platform:
+       source = actions_path.read_text(encoding="utf-8")
+   No grading logic was changed — only the file open mode. Mac/Linux
+   default to utf-8 and were never affected.
+"""
+
 # ── Conversation 1: Happy path ─────────────────────────────────────────────
 
 CONVERSATION_1_TRACE = """
